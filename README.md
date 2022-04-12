@@ -6,7 +6,7 @@
 
 Test app setup to act as an end to end proof of concept for Google Calendar API push notifications.
 
-Read the rubbish guide at: https://developers.google.com/calendar/api/guides/push . I say that, it does cover some important design points:
+Read the rubbish guide at: https://developers.google.com/calendar/api/guides/push. However, it does consider some important design points:
 - More than one subscription could be valid at any point
 - The recieving URL will need HTTPS with a valid certificate. 
 
