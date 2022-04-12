@@ -30,7 +30,7 @@
         /// <summary>
         /// The url to receive the google calendar push notifications.
         /// </summary>
-        public const string ReceivingUrl = "[Your URL]/api/googlenotifications/events";
+        public const string ReceivingUrl = "https://[Your URL]/api/googlenotifications/events";
 
         public const string DeregisterChannel = "Press any key to deregister channel...";
         public const string TerminateProgram = "Press any key to terminate...";
