@@ -55,6 +55,8 @@ Keep this window open, and make a copy of the HTTPS address.
 The [.App](https://github.com/EdwardCalvert/GoogleCalendarPushNotifications/blob/master/GoogleCalendarPushNotifications.App/Constants.cs) has a page of constansts you need to fill out. 
 
 
+
+
 ```C# 
         public const string GoogleAccount = "[YOUR GSUITE EMAIL ADDRESS]";
 
@@ -65,7 +67,16 @@ The [.App](https://github.com/EdwardCalvert/GoogleCalendarPushNotifications/blob
         public const string GoogleChannelRegistrationUrl = "https://www.googleapis.com/calendar/v3/calendars/" + GoogleCalendarId + "/events/watch";
         
         public const string GoogleChannelDeregistrationUrl = "https://www.googleapis.com/calendar/v3/channels/stop";
+        
+       public const string ReceivingUrl = "[Your URL]/api/googlenotifications/events";
 ```
+
+
+## Now run the thing ...
+
+Since you will have the .Web and .App to run, I suggest locating a PowerShell window, and from within the  ``` GoogleCalendarPushNotifications.Web ``` run the ``` dotnet run``` command. 
+
+Then run the .App from Visual Studio.
 
 
 ## Enhancements
