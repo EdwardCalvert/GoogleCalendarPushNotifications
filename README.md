@@ -17,7 +17,7 @@ Console application that allows you to subscribe to the events changing.
 
 ## .Web
 
-A basic .net API controller that Google can post to. It will log to the console any post request.  
+A basic .net API controller that Google can post to. Any post request will be written to the console.  
 
 ![image](https://user-images.githubusercontent.com/72658447/163016072-0b4108e4-c886-4baa-88ae-4fd458129758.png)
 
@@ -81,6 +81,6 @@ Then run the .App from Visual Studio.
 
 ## Enhancements
 
-In the near future, I am to add a fully .Net Solution. 
+In the near future, I aim to add a fully Server Side implementation. 
 
 Contributions warmly accepted. 
