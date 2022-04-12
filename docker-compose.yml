@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  googlecalendarpush:
+    image: googlecalendarpushnotifications:1.0.0
+    container_name: googlecalendarpush2
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - C:\Users\ed\.aspnet\https:/root/.aspnet/https/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.googlecalendarpush.entrypoints=http"
+      - "traefik.http.routers.googlecalendarpush.rule=Host(`googlecalendarpush.dev.calvert4.me.uk`)"
+      - "traefik.http.middlewares.googlecalendarpush-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.googlecalendarpush.middlewares=googlecalendarpush-https-redirect"
+      - "traefik.http.routers.googlecalendarpush-secure.entrypoints=https"
+      - "traefik.http.routers.googlecalendarpush-secure.rule=Host(`googlecalendarpush.dev.calvert4.me.uk`)"
+      - "traefik.http.routers.googlecalendarpush-secure.tls=true"
+      - "traefik.http.routers.googlecalendarpush-secure.service=googlecalendarpush"
+      - "traefik.http.services.googlecalendarpush.loadbalancer.server.port=443"
+      - "traefik.http.services.googlecalendarpush.loadbalancer.server.scheme=https"
+      - "traefik.docker.network=proxy"
+
+    environment:
+      - ASPNETCORE_URLS=https://+;http://+
+      - ASPNETCORE_HTTPS_PORT=7274
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Certificates__Development__Password=crypticpassword
+    # ports:
+    #  - "8080:5274"
+    #  - "7274:7274"
+
+
+
+networks:
+  proxy:
+    external: true

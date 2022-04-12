@@ -4,13 +4,16 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
+using Google.Apis.Util.Store;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace GoogleCalendarPushNotifications.App
 {
@@ -109,6 +112,12 @@ namespace GoogleCalendarPushNotifications.App
                     req.TimeMin = DateTime.Now;
                     req.TimeMax = DateTime.Now.AddDays(1);
                     Events evs = await req.ExecuteAsync();
+                    Console.WriteLine(evs.Items.Aggregate("", (sum, value) => sum = sum + "; " + value.Summary));
+
+                    CalendarListResource.ListRequest request = _calendarService.CalendarList.List();
+                    CalendarList calendar = await request.ExecuteAsync();
+
+                    Console.WriteLine(calendar.Items.Aggregate("", (sum, value) => sum = sum + " " + value.Id + " " + value.Description));
                     success = true;
                 }
             }
@@ -155,30 +164,40 @@ namespace GoogleCalendarPushNotifications.App
         /// <returns>ICredential</returns>
         private ICredential CreateCredential()
         {
-            string credentialJson = File.ReadAllText(Constants.ServiceAccountKeyFile);
-            GoogleCredential credential = GoogleCredential.FromJson(credentialJson);
 
-            if (credential != null)
+
+            UserCredential credential;
+            if (File.Exists(Constants.DesktopOauthClientIDFilePath))
             {
-                if (credential.IsCreateScopedRequired)
+                using (var stream =
+                    new FileStream(Constants.DesktopOauthClientIDFilePath, FileMode.Open, FileAccess.Read))
                 {
-                    credential = credential.CreateScoped(_scopes);
+                    // The file token.json stores the user's access and refresh tokens, and is created
+                    // automatically when the authorization flow completes for the first time.
+                    string credPath = "token.json";
+                    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                        GoogleClientSecrets.Load(stream).Secrets,
+                        _scopes,
+                        "user",
+                        CancellationToken.None,
+                        new FileDataStore(credPath, true)).Result;
                 }
 
-                ServiceAccountCredential baseCredential = credential.UnderlyingCredential as ServiceAccountCredential;
 
-                if (baseCredential != null)
+                // Create Google Calendar API service.
+                var service = new CalendarService(new BaseClientService.Initializer()
                 {
-                    return new ServiceAccountCredential(new ServiceAccountCredential.Initializer(baseCredential.Id)
-                    {
-                        User = Constants.GoogleAccount,
-                        Key = baseCredential.Key,
-                        Scopes = baseCredential.Scopes
-                    });
-                }
+                    HttpClientInitializer = credential,
+                    ApplicationName = "GoogleCallendar callback test",
+                });
+
+
+                return credential;
             }
-
-            return credential;
+            else
+            {
+                throw new FileNotFoundException("Please put the client secret file in the correct location");
+            }
         }
     }
 }

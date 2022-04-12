@@ -8,6 +8,7 @@ namespace GoogleCalendarPushNotifications.App
         public static async Task Main(string[] args)
         {
             var service = new GoogleServiceWrapper();
+            Console.WriteLine($"Notifications will be sent to {Constants.ReceivingUrl}");
 
             // Attempting to authenticate with Google Calendar api.
             bool success = await service.InitialiseService();
